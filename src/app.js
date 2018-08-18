@@ -19,12 +19,11 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
-const basename = process.env.BASENAME || "";
 // app.use("/", indexRouter);
-app.use(`${basename}/api/*`, jwtMiddleware);
+app.use("/api", jwtMiddleware);
 // app.use("/users", usersRouter);
 
-app.use(`${basename}/api/values`, (req, res) => {
+app.use("/api/values", (req, res) => {
   res.send(req.claims);
 });
 

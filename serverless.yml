@@ -46,7 +46,6 @@ Resources:
       Environment:
         Variables:
           NODE_ENV: production
-          BASENAME: Prod
       Events:
         ProxyApi:
           Type: Api
