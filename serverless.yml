@@ -1,0 +1,57 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Serverless application - TodoApp
+
+Resources:
+  LambdaExecutionRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      Path: "/"
+      AssumeRolePolicyDocument: |-
+        {
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": [
+                  "lambda.amazonaws.com"
+                ]
+              },
+              "Action": [
+                "sts:AssumeRole"
+              ]
+            }
+          ]
+        }
+      Policies:
+      - PolicyName: InvokeLambda
+        PolicyDocument:
+          Statement:
+          - Resource: "*"
+            Effect: Allow
+            Action:
+            - lambda:InvokeAsync
+            - lambda:InvokeFunction
+            - cloudformation:DescribeStacks
+            - codepipeline:*
+            - logs:CreateLogGroup
+            - logs:CreateLogStream
+            - logs:PutLogEvents
+
+  ApiGateway:
+    Type: "AWS::Serverless::Function"
+    Properties:
+      Handler: src/lambda.handler
+      Runtime: nodejs8.10
+      Environment:
+        Variables:
+          NODE_ENV: production
+          BASENAME: Prod
+      Events:
+        ProxyApi:
+          Type: Api
+          Properties:
+            Path: /{proxy+}
+            Method: ANY
+      Timeout: 30
+      Role: !Sub arn:aws:iam::${AWS::AccountId}:role/${LambdaExecutionRole}
