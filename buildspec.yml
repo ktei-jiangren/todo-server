@@ -8,7 +8,7 @@ phases:
       - npm run lint
       - rm -rf node_modules/
       - npm install --only=production
-      - echo $CLOUD_STORAGE_KEY > cloud-storage-key.json
+      - echo "$CLOUD_STORAGE_KEY" > cloud-storage-key.json
       - aws cloudformation package --template-file serverless.yml --s3-bucket $BUILD_OUTPUT_BUCKET --output-template-file cf.yml
   post_build:
     commands:

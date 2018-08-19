@@ -15,9 +15,6 @@ Parameters:
   GitHubToken:
     Type: "AWS::SSM::Parameter::Value<String>"
     Description: "The SSM parameter name for OAuth token of GitHub to grant AWS access to the repository"
-  CloudStorageKey:
-    Type: "AWS::SSM::Parameter::Value<String>"
-    Description: "The SSM parameter name for Google Cloud Storage access key"
   Branch:
     Type: String
     Description: "The repository branch used for build and deployment"
@@ -80,7 +77,8 @@ Resources:
           - Name: BUILD_OUTPUT_BUCKET
             Value: !Ref "ArtifactBucket"
           - Name: CLOUD_STORAGE_KEY
-            Value: !Ref "CloudStorageKey"
+            Value: "TodoAppGoogleCloudStorageKey"
+            Type: PARAMETER_STORE
       ServiceRole: !Ref "CodeBuildServiceRole"
 
   CFNPipelinePolicy:
