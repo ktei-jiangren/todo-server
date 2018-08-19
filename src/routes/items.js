@@ -28,22 +28,19 @@ router.get("/:id", [getItem], async (req, res) => {
   res.send(item);
 });
 
-router.put(
+router.patch(
   "/:id",
   [
-    check("subject")
-      .not()
-      .isEmpty()
-      .withMessage("Subject is required"),
+    check("status")
+      .isIn(["pending", "completed"])
+      .withMessage("Status can only be 'pending' or 'completed'"),
     validate,
     getItem
   ],
   async (req, res) => {
     const { item } = req;
 
-    await itemStore.save(
-      Object.assign(item, _.pick(req.body, ["subject", "description"]))
-    );
+    await itemStore.save(Object.assign(item, _.pick(req.body, ["status"])));
     res.send(item);
   }
 );
@@ -60,8 +57,8 @@ router.post(
   async (req, res) => {
     const item = await itemStore.save(
       Object.assign(
-        { userId: req.identity.userId },
-        _.pick(req.body, ["subject", "description"])
+        { userId: req.identity.userId, status: "pending" },
+        _.pick(req.body, ["subject"])
       )
     );
 
