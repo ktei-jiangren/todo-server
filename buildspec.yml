@@ -17,4 +17,5 @@ phases:
 artifacts:
   files:
     - cf.yml
+    - cloud-storage-key.json
   discard-paths: yes

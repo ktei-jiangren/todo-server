@@ -10,7 +10,7 @@ router.get("/", async (req, res) => {
   res.send(items);
 });
 
-router.get("/:id", async (req, res) => {
+async function getItem(req, res, next) {
   const item = await itemStore.getById(req.params.id);
   if (!item) {
     return res.sendStatus(404);
@@ -18,6 +18,12 @@ router.get("/:id", async (req, res) => {
   if (item.userId !== req.identity.userId) {
     return res.sendStatus(404);
   }
+  req.item = item;
+  next();
+}
+
+router.get("/:id", [getItem], async (req, res) => {
+  const item = req.item;
 
   res.send(item);
 });
@@ -29,16 +35,11 @@ router.put(
       .not()
       .isEmpty()
       .withMessage("Subject is required"),
-    validate
+    validate,
+    getItem
   ],
   async (req, res) => {
-    const item = await itemStore.getById(req.params.id);
-    if (!item) {
-      return res.sendStatus(404);
-    }
-    if (item.userId !== req.identity.userId) {
-      return res.sendStatus(404);
-    }
+    const { item } = req;
 
     await itemStore.save(
       Object.assign(item, _.pick(req.body, ["subject", "description"]))
@@ -68,15 +69,7 @@ router.post(
   }
 );
 
-router.delete("/:id", async (req, res) => {
-  const item = await itemStore.getById(req.params.id);
-  if (!item) {
-    return res.sendStatus(404);
-  }
-  if (item.userId !== req.identity.userId) {
-    return res.sendStatus(404);
-  }
-
+router.delete("/:id", [getItem], async (req, res) => {
   await itemStore.remove(req.params.id);
   res.send(req.params.id);
 });
