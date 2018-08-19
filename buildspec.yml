@@ -8,7 +8,7 @@ phases:
       - npm run lint
       - rm -rf node_modules/
       - npm install --only=production
-      - aws cp s3://vault.disasterdev.net/TodoApp-36a93a271127.json cloud-storage-key.json
+      - aws s3 cp s3://vault.disasterdev.net/TodoApp-36a93a271127.json cloud-storage-key.json
       - aws cloudformation package --template-file serverless.yml --s3-bucket $BUILD_OUTPUT_BUCKET --output-template-file cf.yml
   post_build:
     commands:
