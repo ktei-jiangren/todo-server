@@ -15,6 +15,9 @@ Parameters:
   GitHubToken:
     Type: "AWS::SSM::Parameter::Value<String>"
     Description: "The SSM parameter name for OAuth token of GitHub to grant AWS access to the repository"
+  KeyBucket:
+    Type: String
+    Description: "Name of the S3 bucket to store Cloud Datastore key"
   Branch:
     Type: String
     Description: "The repository branch used for build and deployment"
@@ -54,6 +57,12 @@ Resources:
                   - s3:PutObject
                   - s3:GetObjectVersion
 
+              - Resource:
+                  Fn::Sub: arn:aws:s3:::${KeyBucket}/*
+                Effect: Allow
+                Action:
+                  - s3:GetObject
+
               - Resource: "*"
                 Effect: Allow
                 Action:
@@ -76,9 +85,6 @@ Resources:
         EnvironmentVariables:
           - Name: BUILD_OUTPUT_BUCKET
             Value: !Ref "ArtifactBucket"
-          - Name: CLOUD_STORAGE_KEY
-            Value: "TodoAppGoogleCloudStorageKey"
-            Type: PARAMETER_STORE
       ServiceRole: !Ref "CodeBuildServiceRole"
 
   CFNPipelinePolicy:
