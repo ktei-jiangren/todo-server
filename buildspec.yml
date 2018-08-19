@@ -3,14 +3,18 @@ version: 0.1
 phases:
   build:
     commands:
-    - echo "Starting build `date` in `pwd`"
-    - npm install --only=production
-    - aws cloudformation package --template-file serverless.yml --s3-bucket $BUILD_OUTPUT_BUCKET --output-template-file cf.yml
+      - echo "Starting build `date` in `pwd`"
+      - npm install
+      - npm run lint
+      - rm -rf node_modules/
+      - npm install --only=production
+      - echo $CLOUD_STORAGE_KEY > cloud-storage-key.json
+      - aws cloudformation package --template-file serverless.yml --s3-bucket $BUILD_OUTPUT_BUCKET --output-template-file cf.yml
   post_build:
     commands:
-    - echo "build completed on `date`"
+      - echo "build completed on `date`"
 
 artifacts:
   files:
-  - cf.yml
+    - cf.yml
   discard-paths: yes

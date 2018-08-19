@@ -1,5 +1,4 @@
----
-AWSTemplateFormatVersion: '2010-09-09'
+AWSTemplateFormatVersion: "2010-09-09"
 Description: "DNS - Serverless - TodoApp"
 
 Parameters:
@@ -15,7 +14,7 @@ Parameters:
 
 Resources:
   RecordSet:
-    Type : "AWS::Route53::RecordSet"
+    Type: "AWS::Route53::RecordSet"
     Properties:
       Name: !Ref DomainName
       Comment: !Sub "API (${DomainName})"

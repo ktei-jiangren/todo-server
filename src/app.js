@@ -1,11 +1,14 @@
+require("dotenv").config();
+
 const createError = require("http-errors");
 const express = require("express");
 const path = require("path");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
-const indexRouter = require("./routes/index");
-const usersRouter = require("./routes/users");
+const itemsRouter = require("./routes/items");
+// const indexRouter = require("./routes/index");
+// const usersRouter = require("./routes/users");
 
 const jwtMiddleware = require("./middleware/jwt");
 const app = express();
@@ -23,10 +26,11 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(cors());
 
 // app.use("/", indexRouter);
-app.use("/api", jwtMiddleware);
+app.use("/", jwtMiddleware);
+app.use("/items", itemsRouter);
 // app.use("/users", usersRouter);
 
-app.use("/api/values", (req, res) => {
+app.use("/claims", (req, res) => {
   res.send(req.claims);
 });
 
